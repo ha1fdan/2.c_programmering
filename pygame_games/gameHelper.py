@@ -22,50 +22,71 @@ class Player():
         self.player_x = self.start_x
         self.player_y = self.start_y
         self.player_speed = 5
+        self.bullet_angle = 0
+        self.health = 100
     
     def moveWithKeys(self,):
         keys = pygame.key.get_pressed()
         bullet=None
         if keys[pygame.K_UP] and self.player_y - self.PLAYER_RADIUS > 0:
             self.player_y -= self.player_speed
+            self.bullet_angle = -90
         if keys[pygame.K_DOWN] and self.player_y + self.PLAYER_RADIUS < self.SCREEN_HEIGHT:
             self.player_y += self.player_speed
+            self.bullet_angle = 90
         if keys[pygame.K_LEFT] and self.player_x - self.PLAYER_RADIUS > 0:
             self.player_x -= self.player_speed
+            self.bullet_angle = 180
         if keys[pygame.K_RIGHT] and self.player_x + self.PLAYER_RADIUS < self.SCREEN_WIDTH:
             self.player_x += self.player_speed
+            self.bullet_angle = 0
         if keys[pygame.K_SPACE]:
-            # shoot bullet by spawining a Bullet object
-            bullet=Bullet(self.SCREEN_WIDTH, self.SCREEN_HEIGHT, 5, self.player_x, self.player_y, math.pi/2, 10)
+            bullet = Bullet(
+                self.SCREEN_WIDTH,
+                self.SCREEN_HEIGHT,
+                5,
+                self.player_x,
+                self.player_y,
+                self.bullet_angle
+            )
 
         return self.player_x, self.player_y, bullet
     
     def updatePostion(self,gameScreen, color: tuple):
         # update player postion on screen
         pygame.draw.circle(gameScreen, color, (self.player_x, self.player_y), self.PLAYER_RADIUS)
+        
     
 class Bullet():
-    def __init__(self, SCREEN_WIDTH: int, SCREEN_HEIGHT: int, BULLET_RADIUS: int, SHOOTER_X: int, SHOOTER_Y: int, TARGET_X: int, TARGET_Y: int):
-        self.SCREEN_WIDTH = SCREEN_WIDTH
-        self.SCREEN_HEIGHT = SCREEN_HEIGHT
-        self.BULLET_RADIUS = BULLET_RADIUS
-        self.bullet_x = SHOOTER_X
-        self.bullet_y = SHOOTER_Y
-        # Calculate angle between shooter and target
-        dx = TARGET_X - SHOOTER_X
-        dy = TARGET_Y - SHOOTER_Y
-        self.BULLET_ANGLE = math.atan2(dy, dx)
-        self.BULLET_SPEED = 2
-    
-    def shoot(self,):
-        # update bullet position based on angle and speed
-        self.bullet_x += self.BULLET_SPEED * math.cos(self.BULLET_ANGLE)
-        self.bullet_y += self.BULLET_SPEED * math.sin(self.BULLET_ANGLE)
-        return self.bullet_x, self.bullet_y
-    
-    def updatePostion(self,gameScreen, color: tuple):
-        # update bullet postion on screen
-        pygame.draw.circle(gameScreen, color, (int(self.bullet_x), int(self.bullet_y)), self.BULLET_RADIUS)
+    def __init__(self, screen_width, screen_height, bullet_radius, shooter_x, shooter_y, bullet_angle):
+        self.screen_width = screen_width
+        self.screen_height = screen_height
+        self.bullet_radius = bullet_radius
+        self.bullet_x = shooter_x
+        self.bullet_y = shooter_y
+        self.bullet_angle = bullet_angle
+        self.bullet_speed = 10
+
+        # spawn slightly outside player
+        angle_rad = math.radians(self.bullet_angle)
+        self.bullet_x += math.cos(angle_rad) * 30
+        self.bullet_y += math.sin(angle_rad) * 30
+
+    def move(self):
+        angle_rad = math.radians(self.bullet_angle)
+        self.bullet_x += math.cos(angle_rad) * self.bullet_speed
+        self.bullet_y += math.sin(angle_rad) * self.bullet_speed
+
+    def updatePostion(self, gameScreen, color: tuple):
+        pygame.draw.circle(gameScreen, color, (int(self.bullet_x), int(self.bullet_y)), self.bullet_radius)
+
+    def offScreen(self):
+        return (
+            self.bullet_x < 0 or
+            self.bullet_x > self.screen_width or
+            self.bullet_y < 0 or
+            self.bullet_y > self.screen_height
+        )
 
 class Enemy():
     def __init__(self, SCREEN_WIDTH: int, SCREEN_HEIGHT: int, ENEMY_RADIUS: int,):
