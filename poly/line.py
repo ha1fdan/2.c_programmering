@@ -54,6 +54,10 @@ while running:
     pg.draw.circle(screen, (40,40,220), p4,6)
 
     screen.blit(text, [20,20])
+    
+    if interaction[0]:
+        print(interaction[1])
+        pg.draw.circle(screen, (40,220,40), interaction[1],8)
 
     pg.display.update()
 
