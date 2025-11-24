@@ -4,7 +4,7 @@ import random, math
 #plt.figure()
 n_in_circle = 0
 n_out_circle = 0
-run_times=1_000
+run_times=1_000_000_0
 
 for i in range(run_times):
     """
@@ -28,11 +28,13 @@ for i in range(run_times):
 #plt.show()
 
 # print the closest approximation of pi
-a=len(n_in_circle)
+a=run_times
+print(f"Out of {a} runs {n_out_circle} were out of circle and {n_in_circle} were in the circle")
 
-est_pi=4*n_in_circle/a
-print(f"Estimate of pi: {est_pi}")
-
+# find estimate of pi
+est_pi = 4 * n_in_circle / run_times
+print(f"Estimate of pi: {est_pi:.20f}")
+# A faster version without plotting
 """
 import random
 import time
