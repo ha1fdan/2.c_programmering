@@ -1,35 +1,22 @@
 #!/usr/bin/env python3
+from lib import sum, findMax, findMin, sortTS
 
-def findMax(sejListe) -> int:
-    stoersteTal = sejListe[0]
-    for talDerTejkkes in sejListe:
-        if talDerTejkkes > stoersteTal:
-            stoersteTal = talDerTejkkes
+### ================== TESTING =================== ###
 
-    return stoersteTal
+def test_sum():
+    assert sum(2,2) == 4
 
-def findMin(sejListe) -> int:
-    mindsteTal = sejListe[0]
-    for talDerTejkkes in sejListe:
-        if talDerTejkkes < mindsteTal:
-            mindsteTal = talDerTejkkes
+def test_max():
+    assert findMax([1,16,3,9,66,33,52,79]) == 79
 
-    return mindsteTal
+def test_min():
+    assert findMin([1,16,3,9,66,33,52,79]) == 1
 
-def sortTS(sejListe) -> list:
-    sortedList=[]
-    
-    while len(sejListe):
-        cMin = findMin(sejListe)
-        sortedList.append(cMin)
-        sejListe.remove(cMin)
+def test_sort():
+    assert sortTS([1,16,3,9,66,33,52,79]) == [1,3,9,16,33,52,66,79]
 
-    return sortedList
-
-
-### ======================================== ###
-
-testingListe = [1,16,3,9,66,33,52,79]
-print(findMax(testingListe))
-print(findMin(testingListe))
-print(sortTS(testingListe))
+if __name__ == "__main__":
+    minListe=[56,43,21,99,0,67]
+    print(f"Min: {findMin(minListe)}")
+    print(f"Max: {findMax(minListe)}")
+    print(f"Sorted: {sortTS(minListe)}")
