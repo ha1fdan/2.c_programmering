@@ -21,6 +21,18 @@ def test_max3():
 def test_max4():
     assert findMax([-3,-2,-5,-1,-7,-8]) == -1
 
+def test_max5():
+    assert findMax([3,3,3,3,3,3,3,3,3]) == 3
+    
+def test_max6():
+    assert findMax("Hej med dig") == "m"
+
+def test_max7():
+    assert findMax((1,16,3,9,66,33,52,79)) == 79
+    
+def test_max8():
+    assert findMax([]) == None
+
 def test_min():
     assert findMin([1,16,3,9,66,33,52,79]) == 1
     

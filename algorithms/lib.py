@@ -5,6 +5,7 @@ def sum(a: int,b: int) -> int:
     return a + b
 
 def findMax(sejListe: list) -> float:
+    if len(sejListe) == 0: return None
     stoersteTal = sejListe[0]
     #print("star tal: ", stoersteTal)
     for talDerTejkkes in sejListe:
@@ -16,6 +17,7 @@ def findMax(sejListe: list) -> float:
     return stoersteTal
 
 def findMin(sejListe: list) -> float:
+    if len(sejListe) == 0: return None
     mindsteTal = sejListe[0]
     for talDerTejkkes in sejListe:
         if talDerTejkkes < mindsteTal:
@@ -24,8 +26,8 @@ def findMin(sejListe: list) -> float:
     return mindsteTal
 
 def sortTS(sejListe: list) -> list:
+    if len(sejListe) == 0: return None
     sortedList=[]
-    
     while len(sejListe):
         cMin = findMin(sejListe)
         sortedList.append(cMin)
