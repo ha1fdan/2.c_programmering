@@ -6,8 +6,11 @@ def sum(a: int,b: int) -> int:
 
 def findMax(sejListe: list) -> float:
     stoersteTal = sejListe[0]
+    #print("star tal: ", stoersteTal)
     for talDerTejkkes in sejListe:
+        #print(f"tejekker om {talDerTejkkes} er større end {stoersteTal}")
         if talDerTejkkes > stoersteTal:
+            #print("det nye største tal: ", talDerTejkkes)
             stoersteTal = talDerTejkkes
 
     return stoersteTal

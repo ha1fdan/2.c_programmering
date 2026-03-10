@@ -31,7 +31,7 @@ def test_find_2():
     assert find([7,8,3,9,2],5) == None
 
 if __name__ == "__main__":
-    minListe=[56,43,21,99,0,67]
+    minListe=[0,43,21,99,56,67]
     print(f"Min: {findMin(minListe)}")
     print(f"Max: {findMax(minListe)}")
     print(f"Sorted: {sortTS(minListe)}")
