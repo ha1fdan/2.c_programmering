@@ -1,10 +1,10 @@
 import math
 
 ### -------------- Modul 1 -------------- ###
-def sum(a,b):
+def sum(a: int,b: int) -> int:
     return a + b
 
-def findMax(sejListe) -> int:
+def findMax(sejListe: list) -> float:
     stoersteTal = sejListe[0]
     for talDerTejkkes in sejListe:
         if talDerTejkkes > stoersteTal:
@@ -12,7 +12,7 @@ def findMax(sejListe) -> int:
 
     return stoersteTal
 
-def findMin(sejListe) -> int:
+def findMin(sejListe: list) -> float:
     mindsteTal = sejListe[0]
     for talDerTejkkes in sejListe:
         if talDerTejkkes < mindsteTal:
@@ -20,7 +20,7 @@ def findMin(sejListe) -> int:
 
     return mindsteTal
 
-def sortTS(sejListe) -> list:
+def sortTS(sejListe: list) -> list:
     sortedList=[]
     
     while len(sejListe):
@@ -31,7 +31,7 @@ def sortTS(sejListe) -> list:
     return sortedList
 
 ### -------------- Modul 2 -------------- ###
-def solve2(a,b,c,d):
+def solve2(a: float, b: float, c: float, d: float) -> list:
     """
     som løser funktionen løser ligningen ax^2 + bx + c = d. Beregn d og brug den til at vurdere hvorvidt der skal returneres 0, 1 eller 2 løsninger. Løsningerne kan passende returneres i en liste (hvis listen er tom er der nul løsninger, hvis den indeholder ét element var der en løsning osv.)
     """

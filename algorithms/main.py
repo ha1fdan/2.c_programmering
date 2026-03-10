@@ -5,9 +5,15 @@ from lib import sum, findMax, findMin, sortTS, solve2, find
 
 def test_sum():
     assert sum(2,2) == 4
+    
+def test_sum2():
+    assert sum(2.2,2.2) == 4.4
 
 def test_max():
     assert findMax([1,16,3,9,66,33,52,79]) == 79
+
+def test_max2():
+    assert findMax([1,2.2,8.9,6,3.7,11.2]) == 11.2
 
 def test_min():
     assert findMin([1,16,3,9,66,33,52,79]) == 1
