@@ -9,31 +9,31 @@ def test_sum():
 def test_sum2():
     assert sum(2.2,2.2) == 4.4
 
-def test_max():
+def test_max(): # integers test
     assert findMax([1,16,3,9,66,33,52,79]) == 79
 
-def test_max2():
+def test_max2(): # floats test
     assert findMax([1,2.2,8.9,6,3.7,11.2]) == 11.2
 
-def test_max3():
+def test_max3(): # negative numbers and floats test
     assert findMax([1,2.0,-0.1,-3,7.2]) == 7.2
 
-def test_max4():
+def test_max4(): # negative numbers test
     assert findMax([-3,-2,-5,-1,-7,-8]) == -1
 
-def test_max5():
+def test_max5(): # same values test
     assert findMax([3,3,3,3,3,3,3,3,3]) == 3
     
-def test_max6():
+def test_max6(): # string test
     assert findMax("Hej med dig") == "m"
 
-def test_max7():
-    assert findMax((1,16,3,9,66,33,52,79)) == 79
+def test_max7(): # tuple test
+    assert findMax((7,8,0,1,3)) == 8
     
-def test_max8():
+def test_max8(): # empty list test
     assert findMax([]) == None
 
-def test_max8():
+def test_max8(): # string list test
     assert findMax(["hej", "med", "dig"]) == "med"
 
 def test_min():
