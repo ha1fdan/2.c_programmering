@@ -33,6 +33,9 @@ def test_max7():
 def test_max8():
     assert findMax([]) == None
 
+def test_max8():
+    assert findMax(["hej", "med", "dig"]) == "med"
+
 def test_min():
     assert findMin([1,16,3,9,66,33,52,79]) == 1
     
