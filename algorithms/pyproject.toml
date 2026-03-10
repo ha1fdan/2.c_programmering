@@ -1,7 +1,7 @@
 [project]
 name = "algorithms"
-version = "0.1.0"
+version = "0.1.1"
 description = "Simple algorithms in Python"
 readme = "README.md"
 requires-python = ">=3.14"
-dependencies = []
+dependencies = ["pytest==9.0.2"]

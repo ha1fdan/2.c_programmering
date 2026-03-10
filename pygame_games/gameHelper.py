@@ -55,8 +55,7 @@ class Player():
     def updatePostion(self,gameScreen, color: tuple):
         # update player postion on screen
         pygame.draw.circle(gameScreen, color, (self.player_x, self.player_y), self.PLAYER_RADIUS)
-        
-    
+         
 class Bullet():
     def __init__(self, screen_width, screen_height, bullet_radius, shooter_x, shooter_y, bullet_angle):
         self.screen_width = screen_width
