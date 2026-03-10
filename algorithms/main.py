@@ -18,6 +18,9 @@ def test_max2():
 def test_max3():
     assert findMax([1,2.0,-0.1,-3,7.2]) == 7.2
 
+def test_max4():
+    assert findMax([-3,-2,-5,-1,-7,-8]) == -1
+
 def test_min():
     assert findMin([1,16,3,9,66,33,52,79]) == 1
     
