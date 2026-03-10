@@ -15,12 +15,21 @@ def test_max():
 def test_max2():
     assert findMax([1,2.2,8.9,6,3.7,11.2]) == 11.2
 
+def test_max3():
+    assert findMax([1,2.0,-0.1,-3,7.2]) == 7.2
+
 def test_min():
     assert findMin([1,16,3,9,66,33,52,79]) == 1
+    
+def test_min2():
+    assert findMin([2,5,-3,1,0]) == -3
 
 def test_sort():
     assert sortTS([1,16,3,9,66,33,52,79]) == [1,3,9,16,33,52,66,79]
-    
+
+def test_sort2():
+    assert sortTS([2,5.5,-3,1,0]) == [-3, 0, 1, 2, 5.5]
+
 def test_solve2():
     sol = solve2(1,2,-6,2)
     assert 2 in sol and -4 in sol
