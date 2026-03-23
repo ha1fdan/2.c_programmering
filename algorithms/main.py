@@ -3,11 +3,26 @@ from lib import sum, findMax, findMin, sortTS, solve2, find
 
 ### ================== TESTING =================== ###
 
-def test_sum():
+def test_sum(): # integers test
     assert sum(2,2) == 4
     
-def test_sum2():
+def test_sum2(): # floats test
     assert sum(2.2,2.2) == 4.4
+
+def test_sum3():
+    assert sum(-2.2,2.2) == 0
+    
+def test_sum4():
+    assert sum(-2,-2) == -4
+
+def test_sum5():
+    assert sum(0,0) == 0
+
+def test_sum6():
+    assert sum("a", "b") == "ab"
+
+def test_sum7():
+    assert sum([1,2], [3,4]) == [1,2,3,4]
 
 def test_max(): # integers test
     assert findMax([1,16,3,9,66,33,52,79]) == 79

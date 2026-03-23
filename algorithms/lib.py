@@ -1,7 +1,7 @@
 import math
 
 ### -------------- Modul 1 -------------- ###
-def sum(a: int,b: int) -> int:
+def sum(a: float,b: float) -> float:
     return a + b
 
 def findMax(sejListe: list) -> float:
