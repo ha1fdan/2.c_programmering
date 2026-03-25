@@ -15,10 +15,33 @@ def _validate_number_list(values: list[float], name: str) -> None:
         raise TypeError(f"Alle elementer i {name} skal være tal")
 
 ### -------------- Modul 1 -------------- ###
-def sum(a: float,b: float) -> float:
-    _validate_number(a, "a")
-    _validate_number(b, "b")
-    return a + b
+def sum(a,b) -> float:
+    # Handle int, float, list, and string combinations
+    # Both numbers (int/float)
+    if isinstance(a, (int, float)) and isinstance(b, (int, float)):
+        return a + b
+    # Both lists: concatenate
+    if isinstance(a, list) and isinstance(b, list):
+        return a + b
+    # List and number
+    if isinstance(a, list) and isinstance(b, (int, float)):
+        if not all(isinstance(x, (int, float)) for x in a):
+            raise TypeError("Alle elementer i listen skal være tal")
+        return [x + b for x in a]
+    if isinstance(b, list) and isinstance(a, (int, float)):
+        if not all(isinstance(x, (int, float)) for x in b):
+            raise TypeError("Alle elementer i listen skal være tal")
+        return [a + x for x in b]
+    # Both strings
+    if isinstance(a, str) and isinstance(b, str):
+        return a + b
+    # String and number (not supported)
+    if (isinstance(a, str) and isinstance(b, (int, float))) or (isinstance(b, str) and isinstance(a, (int, float))):
+        raise TypeError("Kan ikke lægge tal og tekst sammen")
+    # String and list (not supported)
+    if (isinstance(a, str) and isinstance(b, list)) or (isinstance(b, str) and isinstance(a, list)):
+        raise TypeError("Kan ikke lægge tekst og liste sammen")
+    raise TypeError(f"Kan ikke lægge {type(a).__name__} og {type(b).__name__} sammen")
 
 def findMax(sejListe: list[float]) -> float:
     _validate_number_list(sejListe, "sejListe")

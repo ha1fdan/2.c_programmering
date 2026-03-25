@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 from lib import sum, findMax, findMin, sortTS, solve2, find
+import pytest
 
-### ================== TESTING =================== ###
+### ================== TESTING THAT FUNCTIONS WORK AS EXPECTED =================== ###
 
 def test_sum(): # integers test
     assert sum(2,2) == 4
@@ -39,8 +40,8 @@ def test_max4(): # negative numbers test
 def test_max5(): # same values test
     assert findMax([3,3,3,3,3,3,3,3,3]) == 3
     
-def test_max6(): # string test
-    assert findMax("Hej med dig") == "m"
+#def test_max6(): # string test
+    #assert findMax("Hej med dig") == "m"
 
 def test_max7(): # tuple test
     assert findMax((7,8,0,1,3)) == 8
@@ -71,6 +72,53 @@ def test_find():
     assert find([7,8,3,9,2],3) == 2
 def test_find_2():
     assert find([7,8,3,9,2],5) == None
+
+
+### ================== TESTING THAT FUNCTIONS FAIL AS EXPECTED =================== ###
+
+def test_sum_string():
+    with pytest.raises(TypeError, match="skal være et tal"):
+        sum("a", "b")
+
+def test_max_string():
+    with pytest.raises(TypeError, match="skal være en liste"):
+        findMax("Hej med dig")
+        
+def test_max_empty():
+    with pytest.raises(ValueError, match="Listen er tom"):
+        findMax([])
+
+def test_max_string():
+    with pytest.raises(TypeError, match="skal være en liste"):
+        findMax("Hej med dig")
+        
+def test_max_empty():
+    with pytest.raises(ValueError, match="Listen er tom"):
+        findMin([])
+
+def test_sort_string():
+    with pytest.raises(TypeError, match="skal være en liste"):
+        sortTS("Hej med dig")
+
+def test_sort_empty():
+    with pytest.raises(ValueError, match="Listen er tom"):
+        sortTS([])
+
+def test_solve2_invalid_a():
+    with pytest.raises(TypeError, match="a skal være et tal"):
+        solve2("1", 2, 3, 4)
+
+def test_solve2_invalid_b():
+    with pytest.raises(TypeError, match="b skal være et tal"):
+        solve2(1, "2", 3, 4)
+        
+def test_solve2_invalid_c():
+    with pytest.raises(TypeError, match="c skal være et tal"):
+        solve2(1, 2, "3", 4)
+
+def test_solve2_invalid_d():
+    with pytest.raises(TypeError, match="d skal være et tal"):
+        solve2(1, 2, 3, "4")
 
 if __name__ == "__main__":
     minListe=[0,43,21,99,56,67]
