@@ -19,7 +19,7 @@ def floodfill(grid, row, col, value, debug=False):
         row, col = node # unpack tuple
 
         if debug: 
-            print(f"\n# floodfill while-loop with r={row} and c={col}")
+            print(f"\n# floodfill while-loop with row={row} and col={col}")
 
         # top 2
         if row < 0 or col < 0:
