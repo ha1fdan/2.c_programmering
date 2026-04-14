@@ -1,5 +1,5 @@
 # Left click to draw black
-# Right click to fill blue
+# Right click to fill with the selected color
 import pygame as pg
 
 from floodfill import floodfill
@@ -27,6 +27,7 @@ for col in range(w):
         
 
 left_pressed = False
+current_color = (0,0,200)
 
 running = True
 while running:
@@ -38,6 +39,12 @@ while running:
         elif event.type == pg.KEYDOWN:
             if event.key == pg.K_ESCAPE:
                 running = False
+            elif event.key == pg.K_1:
+                current_color = (0,0,200)
+            elif event.key == pg.K_2:
+                current_color = (200,0,0)
+            elif event.key == pg.K_3:
+                current_color = (0,200,0)
 
         elif event.type == pg.MOUSEBUTTONDOWN:
             if event.button == 1:
@@ -47,7 +54,7 @@ while running:
                 x, y = event.pos
                 row = y//px_size
                 col = x//px_size
-                floodfill(image,row,col,2)
+                floodfill(image,row,col,current_color)
 
         elif event.type == pg.MOUSEBUTTONUP:
             if event.button == 1:
@@ -67,8 +74,8 @@ while running:
                 pg.draw.rect(screen, (0,0,0), (col*px_size+1, row*px_size+1, px_size-1, px_size-1))
             elif image[row][col] == 1:
                 pg.draw.rect(screen, (200,200,200), (col*px_size+1, row*px_size+1, px_size-1, px_size-1))
-            elif image[row][col] == 2:
-                pg.draw.rect(screen, (0,0,200), (col*px_size+1, row*px_size+1, px_size-1, px_size-1))
+            else:
+                pg.draw.rect(screen, image[row][col], (col*px_size+1, row*px_size+1, px_size-1, px_size-1))
 
     pg.display.flip()
     clock.tick(fps)
