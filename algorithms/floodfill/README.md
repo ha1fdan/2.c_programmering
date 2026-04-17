@@ -11,3 +11,10 @@ A simple floodfill algorithm made with PyGame.
 
 ---
 
+## Features
+[x] Floodfill with colors
+[ ] Paint with colors, not only black.
+[x] Eraser tool
+[x] Save canvas to PNG image
+[ ] Undo/Redo functionality
+[ ] Circle maker (key C) with adjustable radius (popup)
