@@ -1,6 +1,10 @@
 # Left click to draw black
 # Right click to fill with the selected color
 import pygame as pg
+import time
+
+def currentTime():
+    return str(int(round(time.time() * 1000, 5)))[::3]
 
 from floodfill import floodfill
 
@@ -27,7 +31,9 @@ for col in range(w):
         
 
 left_pressed = False
-current_color = (0,0,200)
+fill_color = (0,0,200)
+eraser_color = (200,200,200)
+eraser_pressed = False
 
 running = True
 while running:
@@ -40,21 +46,31 @@ while running:
             if event.key == pg.K_ESCAPE:
                 running = False
             elif event.key == pg.K_1:
-                current_color = (0,0,200)
+                fill_color = (0,0,200)
             elif event.key == pg.K_2:
-                current_color = (200,0,0)
+                fill_color = (200,0,0)
             elif event.key == pg.K_3:
-                current_color = (0,200,0)
+                fill_color = (0,200,0)
+            elif event.key == pg.K_s:
+                pg.image.save(screen, f"drawing_{currentTime()}.png")
+            
+        ### Eraser
+            if event.key == pg.K_e:
+                eraser_pressed = True
+        elif event.type == pg.KEYUP:
+            if event.key == pg.K_e:
+                eraser_pressed = False
+            
 
         elif event.type == pg.MOUSEBUTTONDOWN:
             if event.button == 1:
                 left_pressed = True
-
+            
             if event.button == 3:
                 x, y = event.pos
                 row = y//px_size
                 col = x//px_size
-                floodfill(image,row,col,current_color)
+                floodfill(image,row,col,fill_color)
 
         elif event.type == pg.MOUSEBUTTONUP:
             if event.button == 1:
@@ -65,7 +81,12 @@ while running:
         row = y//px_size
         col = x//px_size
         image[row][col] = 0
-
+    
+    if eraser_pressed:
+        x,y = pg.mouse.get_pos()
+        row = y//px_size
+        col = x//px_size
+        image[row][col] = 1
 
     screen.fill((0,0,0))
     for row in range(h):

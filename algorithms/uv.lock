@@ -38,10 +38,14 @@ version = "0.1.0"
 source = { virtual = "floodfill" }
 dependencies = [
     { name = "pygame" },
+    { name = "pytest" },
 ]
 
 [package.metadata]
-requires-dist = [{ name = "pygame", specifier = ">=2.6.1" }]
+requires-dist = [
+    { name = "pygame", specifier = ">=2.6.1" },
+    { name = "pytest", specifier = ">=9.0.2" },
+]
 
 [[package]]
 name = "iniconfig"
