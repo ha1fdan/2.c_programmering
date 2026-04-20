@@ -5,11 +5,18 @@ def printgrid(grid):
 
 def floodfill(grid, row, col, value, debug=False):
 
+    if not grid or not grid[0]:
+        return
+
+    max_row = len(grid)-1
+    max_col = len(grid[0])-1
+
+    if row < 0 or col < 0 or row > max_row or col > max_col:
+        return
+
     org_value = grid[row][col]
     if org_value == value: #would loop infinitely, so we return immediately.
         return
-    max_row = len(grid)-1
-    max_col = len(grid[0])-1
    
     queue = []
     queue.append((row,col))

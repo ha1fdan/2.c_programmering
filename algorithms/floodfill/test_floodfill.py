@@ -131,3 +131,85 @@ def test_ff_island_untouched():
     assert grid[3][2] == 0
     assert grid[4][2] == 0
     assert grid[2][0] == 1
+
+
+# Start i kanten af billedet uden crash
+def test_ff_edge_start_no_crash():
+    grid = [[0,0,0],
+            [1,1,0],
+            [0,0,0]]
+
+    expected = [[3,3,3],
+                [1,1,3],
+                [3,3,3]]
+
+    floodfill(grid, 0, 2, 3)
+
+    assert grid == expected
+
+
+# Tomt gitter håndteres uden crash
+def test_ff_empty_grid_no_crash():
+    grid = []
+
+    floodfill(grid, 0, 0, 9)
+
+    assert grid == []
+
+
+# Start-række uden for billedet ændrer ikke gitteret
+def test_ff_row_out_of_bounds_no_change():
+    grid = [[0,0],
+            [0,0]]
+
+    expected = [[0,0],
+                [0,0]]
+
+    floodfill(grid, 5, 0, 1)
+
+    assert grid == expected
+
+
+# Start-kolonne uden for billedet ændrer ikke gitteret
+def test_ff_col_out_of_bounds_no_change():
+    grid = [[0,0],
+            [0,0]]
+
+    expected = [[0,0],
+                [0,0]]
+
+    floodfill(grid, 0, 5, 1)
+
+    assert grid == expected
+
+
+# Negativ startposition håndteres som uden for billede
+def test_ff_negative_index_out_of_bounds_no_change():
+    grid = [[0,0],
+            [0,0]]
+
+    expected = [[0,0],
+                [0,0]]
+
+    floodfill(grid, -1, 0, 1)
+
+    assert grid == expected
+
+
+# Indviklet mønster: fyldning følger smalle korridorer uden at krydse vægge
+def test_ff_intricate_pattern_corridors():
+    grid = [[0,1,0,0,0,1,0],
+            [0,1,0,1,0,1,0],
+            [0,0,0,1,0,0,0],
+            [1,1,0,1,1,1,0],
+            [0,0,0,0,0,1,0]]
+
+    expected = [[7,1,7,7,7,1,7],
+                [7,1,7,1,7,1,7],
+                [7,7,7,1,7,7,7],
+                [1,1,7,1,1,1,7],
+                [7,7,7,7,7,1,7]]
+
+    floodfill(grid, 0, 0, 7)
+
+    assert grid == expected
