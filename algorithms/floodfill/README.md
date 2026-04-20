@@ -9,11 +9,13 @@ A simple floodfill algorithm made with PyGame.
 | 3 | Floodfill with green | Single press |
 | s | Save canvas to PNG image | Single press |
 | e | Eraser tool | Holding key |
+| q | Clear canvas | Single press |
 
 ---
 
 ## Features
 - [x] Floodfill with colors
+- [x] Clear canvas / reset
 - [ ] Paint with colors, not only black
 - [x] Eraser tool
 - [x] Save canvas to PNG image

@@ -1,4 +1,5 @@
 from floodfill import floodfill
+import pytest
 
 # Fylder én celle omgivet af vægge
 def test_ff_full_boundaries():
@@ -54,7 +55,8 @@ def test_ff_same_value_no_change():
                 [1,1,1],
                 [1,1,1]]
 
-    floodfill(grid, 1, 1, 1)
+    with pytest.raises(ValueError, match="Point already has the fill value"):
+        floodfill(grid, 1, 1, 1)
 
     assert grid == expected
 
@@ -152,7 +154,8 @@ def test_ff_edge_start_no_crash():
 def test_ff_empty_grid_no_crash():
     grid = []
 
-    floodfill(grid, 0, 0, 9)
+    with pytest.raises(ValueError, match="Grid cannot be empty"):
+        floodfill(grid, 0, 0, 1)
 
     assert grid == []
 
@@ -165,7 +168,8 @@ def test_ff_row_out_of_bounds_no_change():
     expected = [[0,0],
                 [0,0]]
 
-    floodfill(grid, 5, 0, 1)
+    with pytest.raises(ValueError, match="Point is out of bounds"):
+        floodfill(grid, 5, 0, 1)
 
     assert grid == expected
 
@@ -178,7 +182,8 @@ def test_ff_col_out_of_bounds_no_change():
     expected = [[0,0],
                 [0,0]]
 
-    floodfill(grid, 0, 5, 1)
+    with pytest.raises(ValueError, match="Point is out of bounds"):
+        floodfill(grid, 0, 5, 1)
 
     assert grid == expected
 
@@ -191,7 +196,8 @@ def test_ff_negative_index_out_of_bounds_no_change():
     expected = [[0,0],
                 [0,0]]
 
-    floodfill(grid, -1, 0, 1)
+    with pytest.raises(ValueError, match="Point is out of bounds"):
+        floodfill(grid, -1, 0, 1)
 
     assert grid == expected
 

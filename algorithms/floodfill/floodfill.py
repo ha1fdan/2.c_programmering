@@ -6,17 +6,17 @@ def printgrid(grid):
 def floodfill(grid, row, col, value, debug=False):
 
     if not grid or not grid[0]:
-        return
+        raise ValueError("Grid cannot be empty")
 
     max_row = len(grid)-1
     max_col = len(grid[0])-1
 
     if row < 0 or col < 0 or row > max_row or col > max_col:
-        return
+        raise ValueError("Point is out of bounds")
 
     org_value = grid[row][col]
     if org_value == value: #would loop infinitely, so we return immediately.
-        return
+        raise ValueError("Point already has the fill value")
    
     queue = []
     queue.append((row,col))
