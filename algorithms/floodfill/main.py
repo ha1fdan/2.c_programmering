@@ -84,7 +84,10 @@ while running:
                 row = y//px_size
                 col = x//px_size
                 if 0 <= row < h and 0 <= col < w:
-                    floodfill(image,row,col,fill_color)
+                    try:
+                        floodfill(image,row,col,fill_color)
+                    except ValueError as e:
+                        print(f"Error: {e}")
                     needs_redraw = True
 
         elif event.type == pg.MOUSEBUTTONUP:
