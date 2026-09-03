@@ -2,7 +2,7 @@ from flask import Flask, g, request, render_template, redirect, url_for
 import sqlite3
 import os
 
-import prettytable
+import prettytable #pip install prettytable
 
 db_path = os.path.join(os.path.dirname(__file__), "messages.db")
 
