@@ -103,7 +103,7 @@ while running:
                     state = "highscores"
                 elif event.unicode and event.unicode.isprintable():
                     name += event.unicode
-
+ 
         text = font_large.render(f"Name: {name}", True, (255,255,255))
         screen.blit(text, (50,200))
 
@@ -111,7 +111,7 @@ while running:
         
     elif state == "highscores":
         screen.fill((0,0,0))
-        scores = con.execute("SELECT DISTINCT name, reaction_time_ms FROM highscores ORDER BY reaction_time_ms ASC LIMIT 10").fetchall()
+        scores = con.execute("SELECT name, reaction_time_ms FROM highscores GROUP BY name ORDER BY reaction_time_ms ASC LIMIT 10").fetchall()
         for i, s in enumerate(scores, start=1):
             text = font.render(f"#{i}  {s['name']}   {round(s['reaction_time_ms'], 3)}", True, (255,255,255))
             screen.blit(text, (100,i*100))
