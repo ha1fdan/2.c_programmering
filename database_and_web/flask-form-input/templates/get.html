@@ -1,0 +1,14 @@
+<form action="" method="get">
+    <label for="name">Enter your name:</label>
+    <input type="text" name="name" id="name" required>
+
+    <label for="email">Enter your email:</label>
+    <input type="email" name="email" id="email" required>
+
+    <input type="submit" value="Submit" required>
+</form>
+
+{% if name and email %}
+    <p>Thank you for submitting your email {{email}}
+        for ethernal torment {{name}}!</p>
+{% endif %}
