@@ -92,7 +92,7 @@ def message_board():
     cursor = db.cursor()
     cursor.execute('SELECT username, message FROM messages ORDER BY id DESC LIMIT 10')
     messages = cursor.fetchall()
-    return render_template('post3.html', message=message, messages=messages)
+    return render_template('message_board.html', message=message, messages=messages)
 
 if __name__ == '__main__':
     init_db()
