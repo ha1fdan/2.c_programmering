@@ -2,11 +2,13 @@
 {% block title %}Artists{% endblock %}
 
 {% block content %}
-<h1>Artists</h1>
+<div class="container">
+  <h1 class="h2 mb-4">Artists</h1>
 
-<ul>
-{% for a in artists %}
-<li><a href="/artist/{{a['ArtistId']}}">{{ a['Name'] }}</a></li>
-{% endfor %}
-</ul>
+  <div class="list-group">
+  {% for a in artists %}
+    <a href="{{ url_for('list_artist_albums', artist_id=a['ArtistId']) }}" class="list-group-item list-group-item-action">{{ a['Name'] }}</a>
+  {% endfor %}
+  </div>
+</div>
 {% endblock %}

@@ -6,22 +6,32 @@
 
 
 {% block content %}
-<h1>{{ tracks[0]['AlbumTitle']}} by {{tracks[0]['ArtistName']}}</h1>
+<div class="container">
+  <div class="d-flex align-items-center gap-4 mb-4">
+    <img src="{{ url_for('static', filename='covers/' + tracks[0]['Cover'])}}" alt="Album Cover" width="160" class="rounded shadow-sm">
+    <div>
+      <h1 class="h2 mb-1">{{ tracks[0]['AlbumTitle']}}</h1>
+      <p class="text-muted mb-0"><a href="{{ url_for('list_artist_albums', artist_id=tracks[0]['ArtistId']) }}" class="text-muted">{{ tracks[0]['ArtistName'] }}</a></p>
+    </div>
+  </div>
 
-<img src="{{ url_for('static', filename='covers/' + tracks[0]['Cover'])}}" alt="Album Cover" width="200">
-
-<table border="1">
-    <tr>
+  <table class="table table-striped align-middle">
+    <thead>
+      <tr>
         <th>Track Name</th>
         <th>Duration</th>
         <th>Released</th>
-    </tr>
-{% for t in tracks %}
-    <tr>
-        <td><a href="#" onclick="play(this)" data-audiosrc="{{ url_for('static', filename='audio/' + t['Audio'])}}">{{t['TrackName']}} <img class="playbtn" src="/static/play.svg"></a></td>
-        <td>{{ ((t['Duration'])/60/60/60)|round(method='ceil') }} min and {{ ((t['Duration'])%60)|round(method='ceil') }} sec</td>
+      </tr>
+    </thead>
+    <tbody>
+    {% for t in tracks %}
+      <tr>
+        <td><a href="#" hx-boost="false" onclick="play(this)" data-audiosrc="{{ url_for('static', filename='audio/' + t['Audio'])}}" data-cover="{{ url_for('static', filename='covers/' + t['Cover']) }}" class="text-decoration-none">{{t['TrackName']}} <img class="playbtn" src="/static/play.svg"></a></td>
+        <td>{{ (t['Duration'] // 60000) }}:{{ '%02d'|format((t['Duration'] // 1000) % 60) }}</td>
         <td>{{t['Release']}}</td>
-    </tr>
-{% endfor %}
-
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
 {% endblock %}

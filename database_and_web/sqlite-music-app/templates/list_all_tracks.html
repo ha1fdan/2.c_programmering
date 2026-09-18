@@ -1,14 +1,27 @@
 {% extends 'base.html' %}
-{% block title %}Artists{% endblock %}
+{% block title %}Tracks{% endblock %}
 
 {% block content %}
-<h1>Tracks</h1>
+<div class="container">
+  <h1 class="h2 mb-4">Tracks</h1>
 
-<ul>
-{% for t in tracks %}
-<li><a href="#" onclick="play(this)" data-audiosrc="/static/audio/{{t['Audio']}}">
-    {{ t['Name'] }} <img class="playbtn" src="/static/play.svg">
-</a>
-{% endfor %}
-</ul>
+  <table class="table table-striped align-middle">
+    <thead>
+      <tr>
+        <th>Track Name</th>
+        <th>Album</th>
+        <th>Duration</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for t in tracks %}
+      <tr>
+        <td><a href="#" hx-boost="false" onclick="play(this)" data-audiosrc="{{ url_for('static', filename='audio/' + t['Audio']) }}" data-cover="{{ url_for('static', filename='covers/' + t['Cover']) }}" data-track="{{ t['TrackName'] }}" class="text-decoration-none">{{ t['TrackName'] }} <img class="playbtn" src="/static/play.svg"></a></td>
+        <td><a href="{{ url_for('list_tracks_on_album', album_id=t['AlbumId']) }}" class="text-decoration-none">{{ t['AlbumTitle'] }}</a> <span class="text-muted small">- {{ t['ArtistName'] }}</span></td>
+        <td>{{ (t['Duration'] // 60000) }}:{{ '%02d'|format((t['Duration'] // 1000) % 60) }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
 {% endblock %}

@@ -2,34 +2,127 @@
 <html>
 <head>
   <title>{% block title %}{% endblock %} - Spotipy</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-  <script src="/static/script.js"></script> 
+  <script src="{{ url_for('static', filename='script.js') }}" defer></script>
+  <!-- Bootstrap CSS and JS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+  <!-- htmx -->
+  <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.10/dist/htmx.min.js" integrity="sha384-H5SrcfygHmAuTDZphMHqBJLc3FhssKjG7w/CeCpFReSfwBWDTKpkzPP8c+cLsK+V" crossorigin="anonymous"></script>
 </head>
 
-<body>
-  <nav>
-    <a href="https://spotipy.readthedocs.io/en/2.26.0/"><h1>Spotipy!</h1></a>
-    <ul>
-        <li><a href="{{ url_for('list_artists') }}">All Artists</a>
-        <li><a href="{{ url_for('list_albums') }}">All Albums</a>
-        <li><a href="{{ url_for('list_all_tracks') }}">All tracks</a></li>
-    </ul>
+<body hx-boost="true" hx-target="#page-content" hx-select="#page-content" hx-swap="outerHTML">
+  <!-- https://freefrontend.dev/code/bootstrap/navbar/navbar-snippet/ + https://htmx.org/-->
+  <section>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container">
+        <a class="navbar-brand fw-bold fs-3 text-primary d-flex align-items-center gap-2" href="{{ url_for('home') }}">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M9 17V5l10-2v12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="7" cy="17" r="2.4" fill="currentColor"/>
+            <circle cx="17" cy="15" r="2.4" fill="currentColor"/>
+          </svg>
+          Spotipy
+        </a> <button aria-controls="navbarSupportedContent3" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-bs-target="#navbarSupportedContent3" data-bs-toggle="collapse" type="button"><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse my-2 my-lg-0" id="navbarSupportedContent3">
+          <ul class="navbar-nav ms-lg-3 mb-1">
+            <li class="nav-item ms-lg-4">
+              <a class="nav-link" href="{{ url_for('list_artists') }}">Artists</a>
+            </li>
+            <li class="nav-item ms-lg-4">
+              <a class="nav-link" href="{{ url_for('list_albums') }}">Albums</a>
+            </li>
+            <li class="nav-item ms-lg-4">
+              <a class="nav-link" href="{{ url_for('list_all_tracks') }}">Tracks</a>
+            </li>
+            <li class="nav-item ms-lg-4">
+              <a class="nav-link" href="">Contact</a>
+            </li>
+          </ul>
+          <form method="get" action="{{ url_for('search') }}" class="d-flex align-items-center position-relative ms-auto" autocomplete="off">
+            <div class="input-group align-items-center">
+              <input
+                aria-describedby="button-addon2"
+                aria-label="Search"
+                class="form-control"
+                placeholder="Search"
+                name="query"
+                type="search"
+                id="live-search-input"
+                hx-get="{{ url_for('search_live') }}"
+                hx-trigger="input changed delay:250ms, search"
+                hx-target="#live-search-results"
+                hx-swap="innerHTML"
+                hx-select="unset"
+                hx-boost="false">
+              <button class="btn bg-white border" id="button-addon2" type="submit"><svg class="bi bi-search" fill="currentColor" height="20" viewbox="0 0 16 16" width="20" xmlns="http://www.w3.org/2000/svg">
+              <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path></svg></button>
+            </div>
+            <div id="live-search-results" class="position-absolute top-100 start-0 w-100 mt-1"></div>
+          </form>
+        </div>
+      </div>
+    </nav>
+  </section>
 
-    <form method="get" action="{{ url_for('search') }}">
-      <input type="text" name="query">
-      <input type="submit" value="Search">
-    </form> 
-  </nav>
 
-  <section class="content">
+  <section class="content py-5" id="page-content">
     {% for message in get_flashed_messages() %}
-      <div class="flash">{{ message }}</div>
+      <div class="container">
+        <div class="alert alert-warning">{{ message }}</div>
+      </div>
     {% endfor %}
     {% block content %}{% endblock %}
-    <audio id="audioplayer" controls>
-        <source id="audiosource" src="" type="audio/ogg">
-    </audio>
   </section>
+
+  <footer class="border-top bg-light py-4">
+    <div class="container d-flex flex-wrap align-items-center justify-content-between gap-3">
+      <a href="{{ url_for('home') }}" class="d-flex align-items-center gap-2 text-decoration-none text-primary fw-bold">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M9 17V5l10-2v12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="7" cy="17" r="2.4" fill="currentColor"/>
+          <circle cx="17" cy="15" r="2.4" fill="currentColor"/>
+        </svg>
+        Spotipy
+      </a>
+      <ul class="nav">
+        <li class="nav-item"><a class="nav-link text-muted" href="{{ url_for('list_artists') }}">Artists</a></li>
+        <li class="nav-item"><a class="nav-link text-muted" href="{{ url_for('list_albums') }}">Albums</a></li>
+        <li class="nav-item"><a class="nav-link text-muted" href="{{ url_for('list_all_tracks') }}">Tracks</a></li>
+      </ul>
+      <span class="text-muted small">&copy; 2026 Spotipy - No Rights Reserved</span>
+    </div>
+  </footer>
+
+  <div id="audioplayer" class="fixed-bottom bg-body-tertiary border-top shadow">
+    <audio id="audio-el" class="d-none" preload="none"></audio>
+    <div class="container d-flex align-items-center gap-3 py-2">
+      <div id="hifi-disc" class="rounded-circle bg-dark d-flex align-items-center justify-content-center flex-shrink-0 overflow-hidden" style="width: 2.5rem; height: 2.5rem;" aria-hidden="true">
+        <span id="hifi-disc-dot" class="rounded-circle bg-primary" style="width: .6rem; height: .6rem;"></span>
+        <img id="hifi-disc-img" class="w-100 h-100 object-fit-cover d-none" alt="">
+      </div>
+
+      <div class="flex-grow-1 min-w-0">
+        <div class="text-truncate fw-semibold small" id="hifi-track">Nothing queued</div>
+        <div class="d-flex align-items-center gap-2">
+          <span class="font-monospace text-muted small" id="hifi-current">0:00</span>
+          <input type="range" class="form-range" id="hifi-seek" min="0" max="100" value="0" step="0.1" aria-label="Seek">
+          <span class="font-monospace text-muted small" id="hifi-duration">0:00</span>
+        </div>
+      </div>
+
+      <button type="button" id="hifi-playpause" class="btn btn-primary rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 p-0" style="width: 2.75rem; height: 2.75rem;" aria-label="Play" disabled>
+        <svg id="hifi-icon-play" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4 2.5v11l9-5.5-9-5.5z"/></svg>
+        <svg id="hifi-icon-pause" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="d-none"><path d="M4 2.5h3v11H4v-11zm5 0h3v11H9v-11z"/></svg>
+      </button>
+
+      <div class="d-none d-sm-flex align-items-center gap-2" style="width: 6rem;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" class="text-muted flex-shrink-0" aria-hidden="true"><path d="M3 10v4h4l5 5V5L7 10H3zm13.5 2c0-1.77-.77-3.29-2-4.29v8.58c1.23-1 2-2.52 2-4.29z"/></svg>
+        <input type="range" class="form-range" id="hifi-volume" min="0" max="1" step="0.01" value="1" aria-label="Volume">
+      </div>
+    </div>
+  </div>
 
 </body>
 </html>

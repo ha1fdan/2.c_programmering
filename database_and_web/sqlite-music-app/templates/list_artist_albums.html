@@ -1,13 +1,20 @@
 {% extends 'base.html' %}
-{% block title%}{{artist['ArtistName']}}{% endblock %}
+{% block title%}{{ artist['Name'] }}{% endblock %}
 
 
 {% block content %}
-<h1>{{artist['ArtistName']}}</h1>
+<div class="container">
+  <h1 class="h2 mb-4">{{ artist['Name'] }}</h1>
 
-<ul>
-{% for a in albums %}
-    <li>{{a['Title']}}</li>
-{% endfor %}
-</ul>
+  <div class="row g-4">
+  {% for a in albums %}
+    <div class="col-6 col-md-4 col-lg-2">
+      <a href="{{ url_for('list_tracks_on_album', album_id=a['AlbumId']) }}" class="text-decoration-none text-reset">
+        <img src="{{ url_for('static', filename='covers/' + a['Cover']) }}" class="img-fluid rounded mb-2" alt="{{ a['Title'] }} cover">
+        <div class="fw-semibold small text-truncate">{{ a['Title'] }}</div>
+      </a>
+    </div>
+  {% endfor %}
+  </div>
+</div>
 {% endblock %}

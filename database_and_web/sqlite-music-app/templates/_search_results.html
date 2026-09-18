@@ -1,0 +1,12 @@
+{% if query %}
+<div class="list-group shadow-sm">
+  {% for r in results %}
+  <a class="list-group-item list-group-item-action py-2" href="{{ url_for('list_tracks_on_album', album_id=r['AlbumId']) }}" hx-boost="true" hx-target="#page-content" hx-select="#page-content" hx-swap="outerHTML">
+    <div class="fw-semibold small text-truncate">{{ r['TrackName'] }}</div>
+    <div class="text-muted small text-truncate">{{ r['ArtistName'] }} - {{ r['AlbumTitle'] }}</div>
+  </a>
+  {% else %}
+  <div class="list-group-item text-muted small">No results for &ldquo;{{ query }}&rdquo;</div>
+  {% endfor %}
+</div>
+{% endif %}

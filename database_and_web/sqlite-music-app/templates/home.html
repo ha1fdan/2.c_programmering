@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+
+<div class="container">
+
+<section class="bg-body-tertiary rounded-3 p-5 mb-5">
+  <h1 class="display-4 fw-bold">Spotipy</h1>
+  <p class="lead text-muted mb-4">Browse the whole collection and queue up something to listen to - playback keeps going as you move between pages.</p>
+  <div class="d-flex gap-2">
+    <a href="{{ url_for('list_artists') }}" class="btn btn-primary btn-lg">Browse Artists</a>
+    <a href="{{ url_for('list_albums') }}" class="btn btn-outline-secondary btn-lg">Browse Albums</a>
+  </div>
+</section>
+
+<div class="row text-center g-3 mb-5">
+  <div class="col-md-4">
+    <a href="{{ url_for('list_artists') }}" class="text-decoration-none text-reset">
+      <div class="card h-100 border-0 shadow-sm">
+        <div class="card-body py-4">
+          <div class="display-5 fw-bold text-primary">{{ artist_count }}</div>
+          <div class="text-muted">Artists</div>
+        </div>
+      </div>
+    </a>
+  </div>
+  <div class="col-md-4">
+    <a href="{{ url_for('list_albums') }}" class="text-decoration-none text-reset">
+      <div class="card h-100 border-0 shadow-sm">
+        <div class="card-body py-4">
+          <div class="display-5 fw-bold text-primary">{{ album_count }}</div>
+          <div class="text-muted">Albums</div>
+        </div>
+      </div>
+    </a>
+  </div>
+  <div class="col-md-4">
+    <a href="{{ url_for('list_all_tracks') }}" class="text-decoration-none text-reset">
+      <div class="card h-100 border-0 shadow-sm">
+        <div class="card-body py-4">
+          <div class="display-5 fw-bold text-primary">{{ track_count }}</div>
+          <div class="text-muted">Tracks</div>
+        </div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<h2 class="h4 mb-3">Featured albums</h2>
+<div class="row g-4">
+  {% for a in featured_albums %}
+  <div class="col-6 col-md-4 col-lg-2">
+    <a href="{{ url_for('list_tracks_on_album', album_id=a['AlbumId']) }}" class="text-decoration-none text-reset">
+      <img src="{{ url_for('static', filename='covers/' + a['Cover']) }}" class="img-fluid rounded mb-2" alt="{{ a['Title'] }} cover">
+      <div class="fw-semibold small text-truncate">{{ a['Title'] }}</div>
+      <div class="text-muted small text-truncate">{{ a['ArtistName'] }}</div>
+    </a>
+  </div>
+  {% endfor %}
+</div>
+
+<hr class="my-5">
+
+<div class="text-center mb-4">
+  <span class="text-muted text-uppercase small fw-semibold">Pricing</span>
+  <h2 class="fw-bold">Choose your plan</h2>
+  <p class="text-muted">Just for show - everything here already plays for free.</p>
+</div>
+
+<div class="row g-4 justify-content-center mb-5">
+  <div class="col-md-4 col-lg-3">
+    <div class="card h-100 shadow-sm">
+      <div class="card-body p-4 text-center">
+        <h3 class="fw-bold">Free</h3>
+        <div class="display-5 fw-bold my-3">$0</div>
+        <ul class="list-unstyled text-muted mb-4">
+          <li class="mb-2">Unlimited streaming</li>
+          <li class="mb-2">Shuffle play</li>
+          <li class="mb-2">Ads between tracks</li>
+        </ul>
+        <a href="{{ url_for('list_albums') }}" class="btn btn-outline-primary w-100">Browse Albums</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4 col-lg-3">
+    <div class="card h-100 border-primary border-2 shadow">
+      <div class="card-body p-4 text-center">
+        <span class="badge text-bg-primary mb-2">Most Popular</span>
+        <h3 class="fw-bold">Premium</h3>
+        <div class="display-5 fw-bold my-3">$9.99</div>
+        <ul class="list-unstyled text-muted mb-4">
+          <li class="mb-2">Everything in Free</li>
+          <li class="mb-2">No ads</li>
+          <li class="mb-2">Offline listening</li>
+        </ul>
+        <a href="{{ url_for('list_albums') }}" class="btn btn-primary w-100">Browse Albums</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4 col-lg-3">
+    <div class="card h-100 shadow-sm">
+      <div class="card-body p-4 text-center">
+        <h3 class="fw-bold">Family</h3>
+        <div class="display-5 fw-bold my-3">$14.99</div>
+        <ul class="list-unstyled text-muted mb-4">
+          <li class="mb-2">Everything in Premium</li>
+          <li class="mb-2">Up to 6 accounts</li>
+          <li class="mb-2">Parental controls</li>
+        </ul>
+        <a href="{{ url_for('list_albums') }}" class="btn btn-outline-primary w-100">Browse Albums</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+{% endblock %}
