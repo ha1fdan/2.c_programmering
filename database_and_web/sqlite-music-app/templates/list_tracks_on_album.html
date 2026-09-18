@@ -1,0 +1,27 @@
+<!--│ TrackName │ Duration │ Audio │ AlbumTitle │ Cover │ Release │ ArtistName │-->
+
+
+{% extends 'base.html' %}
+{% block title%}{{ tracks[0]['AlbumTitle']}} by {{tracks[0]['ArtistName']}}{% endblock %}
+
+
+{% block content %}
+<h1>{{ tracks[0]['AlbumTitle']}} by {{tracks[0]['ArtistName']}}</h1>
+
+<img src="{{ url_for('static', filename='covers/' + tracks[0]['Cover'])}}" alt="Album Cover" width="200">
+
+<table border="1">
+    <tr>
+        <th>Track Name</th>
+        <th>Duration</th>
+        <th>Released</th>
+    </tr>
+{% for t in tracks %}
+    <tr>
+        <td><a href="#" onclick="play(this)" data-audiosrc="{{ url_for('static', filename='audio/' + t['Audio'])}}">{{t['TrackName']}} <img class="playbtn" src="/static/play.svg"></a></td>
+        <td>{{ ((t['Duration'])/60/60/60)|round(method='ceil') }} min and {{ ((t['Duration'])%60)|round(method='ceil') }} sec</td>
+        <td>{{t['Release']}}</td>
+    </tr>
+{% endfor %}
+
+{% endblock %}

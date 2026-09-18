@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+<head>
+  <title>{% block title %}{% endblock %} - Spotipy</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script src="/static/script.js"></script> 
+</head>
+
+<body>
+  <nav>
+    <a href="https://spotipy.readthedocs.io/en/2.26.0/"><h1>Spotipy!</h1></a>
+    <ul>
+        <li><a href="{{ url_for('list_artists') }}">All Artists</a>
+        <li><a href="{{ url_for('list_albums') }}">All Albums</a>
+        <li><a href="{{ url_for('list_all_tracks') }}">All tracks</a></li>
+    </ul>
+
+    <form method="get" action="{{ url_for('search') }}">
+      <input type="text" name="query">
+      <input type="submit" value="Search">
+    </form> 
+  </nav>
+
+  <section class="content">
+    {% for message in get_flashed_messages() %}
+      <div class="flash">{{ message }}</div>
+    {% endfor %}
+    {% block content %}{% endblock %}
+    <audio id="audioplayer" controls>
+        <source id="audiosource" src="" type="audio/ogg">
+    </audio>
+  </section>
+
+</body>
+</html>

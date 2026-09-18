@@ -1,0 +1,17 @@
+sqlite> SELECT Track.Name AS TrackName, Duration, Audio, Album.Title AS AlbumTitle, Cover, Release, Artist.Name AS ArtistName FROM Track JOIN Album ON Track.AlbumId = Album.AlbumId JOIN Artist ON Album.ArtistId = Artist.ArtistId WHERE Track.AlbumId = 70;
+╭──────────────────┬──────────┬──────────────────┬────────────┬──────────────────────────────────────────┬────────────┬────────────╮
+│    TrackName     │ Duration │      Audio       │ AlbumTitle │                  Cover                   │  Release   │ ArtistName │
+╞══════════════════╪══════════╪══════════════════╪════════════╪══════════════════════════════════════════╪════════════╪════════════╡
+│ Mein Herz brennt │   279893 │ c17b2fda2f0e906e │ Mutter     │ ab67616d0000b2738b2c42026277efc3e058855b │ 2001-04-02 │ Rammstein  │
+│ Links 2 3 4      │   216733 │ 0d732212b1aff22a │ Mutter     │ ab67616d0000b2738b2c42026277efc3e058855b │ 2001-04-02 │ Rammstein  │
+│ Sonne            │   272440 │ a87a7eb9f9296be2 │ Mutter     │ ab67616d0000b2738b2c42026277efc3e058855b │ 2001-04-02 │ Rammstein  │
+│ Ich will         │   217106 │ 45eaf7b29189762f │ Mutter     │ ab67616d0000b2738b2c42026277efc3e058855b │ 2001-04-02 │ Rammstein  │
+│ Feuer frei!      │   188600 │ fddc09e40d591b50 │ Mutter     │ ab67616d0000b2738b2c42026277efc3e058855b │ 2001-04-02 │ Rammstein  │
+│ Mutter           │   268600 │ eed4e69b4e0b0d55 │ Mutter     │ ab67616d0000b2738b2c42026277efc3e058855b │ 2001-04-02 │ Rammstein  │
+│ Spieluhr         │   286173 │ 7063b8253f305f46 │ Mutter     │ ab67616d0000b2738b2c42026277efc3e058855b │ 2001-04-02 │ Rammstein  │
+│ Zwitter          │   257493 │ 2126553b46e5f8f3 │ Mutter     │ ab67616d0000b2738b2c42026277efc3e058855b │ 2001-04-02 │ Rammstein  │
+│ Rein raus        │   189973 │ 0a369e2e329d422d │ Mutter     │ ab67616d0000b2738b2c42026277efc3e058855b │ 2001-04-02 │ Rammstein  │
+│ Adios            │   228493 │ 3076b268021f0ae6 │ Mutter     │ ab67616d0000b2738b2c42026277efc3e058855b │ 2001-04-02 │ Rammstein  │
+│ Nebel            │   294600 │ 674e12f2a56924c2 │ Mutter     │ ab67616d0000b2738b2c42026277efc3e058855b │ 2001-04-02 │ Rammstein  │
+╰──────────────────┴──────────┴──────────────────┴────────────┴──────────────────────────────────────────┴────────────┴────────────╯
+sqlite> 

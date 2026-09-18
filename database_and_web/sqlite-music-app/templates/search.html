@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}Search{% endblock %}
+
+{% block content %}
+<h1>Search results for '{{ query }}'</h1>
+
+<table border="1">
+    <tr>
+        <th>Track Name</th>
+        <th>Album Title</th>
+        <th>Artist Name</th>
+    </tr>
+{% for r in results %}
+    <tr>
+        <td>{{r['TrackName']}}</td>
+        <td><a href="{{ url_for('list_tracks_on_album', album_id=r['AlbumId']) }}">{{r['AlbumTitle']}}</a></td>
+        <td><a href="{{ url_for('list_artist_albums', artist_id=r['ArtistId']) }}">{{r['ArtistName']}}</a></td>
+    </tr>
+{% endfor %}
+    
+</table>
+
+{% endblock %}

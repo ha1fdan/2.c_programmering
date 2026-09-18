@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}Artists{% endblock %}
+
+{% block content %}
+<h1>Tracks</h1>
+
+<ul>
+{% for t in tracks %}
+<li><a href="#" onclick="play(this)" data-audiosrc="/static/audio/{{t['Audio']}}">
+    {{ t['Name'] }} <img class="playbtn" src="/static/play.svg">
+</a>
+{% endfor %}
+</ul>
+{% endblock %}

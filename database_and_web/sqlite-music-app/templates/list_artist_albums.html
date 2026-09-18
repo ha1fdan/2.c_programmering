@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title%}{{artist['ArtistName']}}{% endblock %}
+
+
+{% block content %}
+<h1>{{artist['ArtistName']}}</h1>
+
+<ul>
+{% for a in albums %}
+    <li>{{a['Title']}}</li>
+{% endfor %}
+</ul>
+{% endblock %}

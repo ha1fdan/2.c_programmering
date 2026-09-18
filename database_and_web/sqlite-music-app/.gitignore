@@ -1,0 +1,5 @@
+static/audio/*
+!static/audio/.gitkeep
+static/covers/*
+!static/covers/.gitkeep
+.venv/

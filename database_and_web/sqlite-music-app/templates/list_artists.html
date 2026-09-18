@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Artists{% endblock %}
+
+{% block content %}
+<h1>Artists</h1>
+
+<ul>
+{% for a in artists %}
+<li><a href="/artist/{{a['ArtistId']}}">{{ a['Name'] }}</a></li>
+{% endfor %}
+</ul>
+{% endblock %}
