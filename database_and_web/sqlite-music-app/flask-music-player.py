@@ -3,7 +3,7 @@ import sqlite3
 import os
 
 app = Flask(__name__)
-app.secret_key = "jf2389qhudn27617uedik9012o"
+app.secret_key = "jf2389qhudn27617uedik9012o" # wtf Jonas, this is not secure!?!?!
 
 # The audio files have no file extension, so Flask's static handler can't
 # guess their type and serves them as application/octet-stream, which makes
