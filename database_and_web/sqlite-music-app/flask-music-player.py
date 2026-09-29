@@ -1,9 +1,12 @@
-from flask import Flask, g, render_template, request, redirect, url_for, flash, send_from_directory
+from flask import Flask, g, render_template, request, redirect, url_for, flash, send_from_directory,session
 import sqlite3
 import os
+import hashlib
+from pathlib import Path
 
 app = Flask(__name__)
-app.secret_key = "jf2389qhudn27617uedik9012o" # wtf Jonas, this is not secure!?!?!
+app.secret_key = os.urandom(24) # wtf Jonas, this is not secure!?!?!'
+app.static_folder = os.path.join(os.path.dirname(__file__), "static")
 
 # The audio files have no file extension, so Flask's static handler can't
 # guess their type and serves them as application/octet-stream, which makes
@@ -42,6 +45,24 @@ def close_db(e=None):
     db = g.pop('db', None)
     if db is not None:
         db.close()
+
+def init_db():
+    db = get_db()
+    exists = db.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='Album'").fetchone()
+    if not exists:
+        with app.open_resource("schema.sql") as f:
+            db.executescript(f.read().decode("utf8"))
+        db.commit()
+    
+    # Create Users table if it doesn't exist
+    db.execute('''CREATE TABLE IF NOT EXISTS User (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    username TEXT UNIQUE NOT NULL,
+                    password TEXT NOT NULL
+                )''')
+    db.commit()
+
+# ------- Routes -----------------
 
 @app.route("/")
 def home():
@@ -142,6 +163,54 @@ def list_artist_albums(artist_id):
 
     return render_template('list_artist_albums.html', artist=artist, albums=albums)
 
+# ----------- User login system -----------------
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+        hashed_password = hashlib.sha256(password.encode()).hexdigest()  # Hash the password
+
+        db = get_db()
+        cur = db.execute("SELECT * FROM User WHERE username=?", (username,))
+        user = cur.fetchone()
+
+        if user and user[2] == hashed_password:  # user[2] is the password column
+            session['user_id'] = user[0]  # user[0] is the id column
+            flash("Login successful!")
+            return redirect(url_for("index"))
+        else:
+            flash("Invalid username or password.")
+    return render_template("login.html")
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+        hashed_password = hashlib.sha256(password.encode()).hexdigest()  # Hash the password
+
+        db = get_db()
+        cur = db.execute("SELECT * FROM User WHERE username=?", (username,))
+        existing_user = cur.fetchone()
+
+        if existing_user:
+            flash("Username already exists. Please choose a different one.")
+            return redirect(url_for("register"))
+
+        db.execute("INSERT INTO User (username, password) VALUES (?, ?)", (username, hashed_password))
+        db.commit()
+        flash("Registration successful! Please log in.")
+        return redirect(url_for("login", username=username))
+
+    return render_template("register.html")
+
+@app.route("/logout")
+def logout():
+    session.pop('user_id', None)
+    return redirect(url_for('login'))
 
 if __name__ == "__main__":
+    with app.app_context():
+        init_db()
     app.run("0.0.0.0", port=5000, debug=True)
