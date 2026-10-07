@@ -5,9 +5,20 @@
 <div class="container">
   <h1 class="h2 mb-4">Artists</h1>
 
-  <div class="list-group">
+  <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-6 g-3">
   {% for a in artists %}
-    <a href="{{ url_for('list_artist_albums', artist_id=a['ArtistId']) }}" class="list-group-item list-group-item-action">{{ a['Name'] }}</a>
+    <div class="col">
+      <a href="{{ url_for('list_artist_albums', artist_id=a['ArtistId']) }}" class="text-decoration-none text-reset">
+        {% if a['Cover'] %}
+          <img src="{{ url_for('static', filename='covers/' + a['Cover']) }}" class="img-fluid rounded mb-2 w-100" style="aspect-ratio:1;object-fit:cover;" alt="{{ a['Name'] }}">
+        {% else %}
+          <div class="rounded mb-2 bg-secondary d-flex align-items-center justify-content-center" style="aspect-ratio:1;">
+            <span class="text-white fs-1">♪</span>
+          </div>
+        {% endif %}
+        <div class="fw-semibold text-truncate">{{ a['Name'] }}</div>
+      </a>
+    </div>
   {% endfor %}
   </div>
 </div>

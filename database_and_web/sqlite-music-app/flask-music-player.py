@@ -58,9 +58,11 @@ def init_db():
     db.execute('''CREATE TABLE IF NOT EXISTS User (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     username TEXT UNIQUE NOT NULL,
-                    password TEXT NOT NULL
+                    password TEXT NOT NULL,
+                    plan_id INTEGER DEFAULT 1,
+                    register_date DEFAULT CURRENT_DATE
                 )''')
-    db.commit()
+    db.commit() 
 
 # ------- Routes -----------------
 
@@ -107,10 +109,15 @@ def search_live():
 @app.route("/artists")
 def list_artists():
     db = get_db()
-    cur = db.execute('SELECT * FROM Artist')
+    cur = db.execute(
+        'SELECT Artist.ArtistId, Artist.Name, Album.Cover, Album.Title AS AlbumTitle '
+        'FROM Artist '
+        'LEFT JOIN Album ON Album.ArtistId = Artist.ArtistId '
+        'GROUP BY Artist.ArtistId '
+        'ORDER BY Artist.Name;'
+    )
     artists = cur.fetchall()
-
-    return render_template('list_artists.html',artists=artists)
+    return render_template('list_artists.html', artists=artists)
 
 # A view (route decorator + function def)
 @app.route("/albums")
@@ -169,6 +176,8 @@ def login():
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
+        if not username or not password:
+            flash("Please provide a username and password.")
         hashed_password = hashlib.sha256(password.encode()).hexdigest()  # Hash the password
 
         db = get_db()
@@ -177,8 +186,10 @@ def login():
 
         if user and user[2] == hashed_password:  # user[2] is the password column
             session['user_id'] = user[0]  # user[0] is the id column
+            session['username'] = user[1] # user[1] is the username colum
+            session['plan_id'] = user[3]  # user[3] is the plan_id colum
             flash("Login successful!")
-            return redirect(url_for("index"))
+            return redirect(url_for("home"))
         else:
             flash("Invalid username or password.")
     return render_template("login.html")
@@ -188,6 +199,8 @@ def register():
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
+        if not username or not password:
+            flash("Please provide a username and password.")
         hashed_password = hashlib.sha256(password.encode()).hexdigest()  # Hash the password
 
         db = get_db()

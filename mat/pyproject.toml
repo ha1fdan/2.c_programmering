@@ -1,0 +1,20 @@
+[project]
+name = "mat"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "ha1fdan", email = "ha1fdan@ha1fdan.xyz" }
+]
+requires-python = ">=3.14"
+dependencies = [
+    "matplotlib>=3.11.1",
+    "scipy>=1.18.1",
+]
+
+[project.scripts]
+mat = "mat:main"
+
+[build-system]
+requires = ["uv_build>=0.12.8,<0.13.0"]
+build-backend = "uv_build"
