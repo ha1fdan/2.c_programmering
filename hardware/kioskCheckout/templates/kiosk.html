@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Self Checkout</title>
+<style>
+  :root {
+    --bg: #f4f5f7; --card: #fff; --text: #1b1f24; --muted: #6b7280; --line: #e2e5ea;
+    --accent: #1f6feb; --ok: #1a7f37; --bad: #cf222e;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #14171c; --card: #1e2229; --text: #e8eaed; --muted: #9aa3af; --line: #2c323b;
+            --accent: #4c8dff; --ok: #3fb950; --bad: #f85149; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: system-ui, sans-serif; background: var(--bg); color: var(--text);
+         height: 100vh; display: grid; grid-template-columns: 1fr 380px; }
+  main { padding: 24px; overflow-y: auto; }
+  h1 { margin: 0 0 16px; font-size: 1.4rem; }
+  aside { background: var(--card); border-left: 1px solid var(--line); padding: 24px;
+          display: flex; flex-direction: column; gap: 16px; }
+  .cart { flex: 1; overflow-y: auto; }
+  .row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0;
+         border-bottom: 1px solid var(--line); gap: 8px; }
+  .row button { background: none; border: none; color: var(--bad); font-size: 1.2rem; cursor: pointer; }
+  .empty { color: var(--muted); padding: 24px 0; text-align: center; }
+  .scale { border-radius: 12px; padding: 14px; background: var(--bg); border: 2px solid var(--line); }
+  .scale.ok { border-color: var(--ok); } .scale.bad { border-color: var(--bad); }
+  .scale .msg { font-weight: 600; }
+  .scale.ok .msg { color: var(--ok); } .scale.bad .msg { color: var(--bad); }
+  .scale small { color: var(--muted); display: block; margin-top: 4px; }
+  .total { display: flex; justify-content: space-between; font-size: 1.6rem; font-weight: 700; }
+  .pay { background: var(--accent); color: #fff; border: none; border-radius: 14px; padding: 20px;
+         font-size: 1.2rem; font-weight: 700; cursor: pointer; }
+  .pay:disabled { background: var(--line); color: var(--muted); cursor: not-allowed; }
+  .clear { background: none; border: none; color: var(--muted); cursor: pointer; font: inherit; }
+  .prompt { background: var(--card); border: 2px solid var(--line); border-radius: 18px; padding: 40px 28px;
+            text-align: center; margin-top: 12vh; }
+  .prompt.ok { border-color: var(--ok); } .prompt.bad { border-color: var(--bad); }
+  .prompt .big { font-size: 2rem; font-weight: 700; }
+  .prompt .sub { color: var(--muted); margin-top: 10px; font-size: 1.1rem; }
+  .choices { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
+  .choices button, .ghost { background: var(--bg); color: var(--text); border: 1px solid var(--line); border-radius: 12px;
+                            padding: 14px 20px; font: inherit; font-weight: 600; cursor: pointer; }
+  .ghost { margin-top: 20px; font-weight: 400; color: var(--muted); }
+  .done { position: fixed; inset: 0; background: var(--ok); color: #fff; display: none;
+          align-items: center; justify-content: center; flex-direction: column; font-size: 2rem; }
+  .done.show { display: flex; }
+  @media (max-width: 800px) { body { grid-template-columns: 1fr; height: auto; } aside { border-left: 0; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>Place your items on the scale one at a time</h1>
+  <div class="prompt" id="prompt"></div>
+</main>
+
+<aside>
+  <div class="cart" id="cart"></div>
+  <div class="scale" id="scale">
+    <div class="msg" id="scaleMsg">Waiting for scale…</div>
+    <small id="scaleDetail"></small>
+  </div>
+  <div class="total"><span>Total</span><span id="total">0.00 kr</span></div>
+  <button class="pay" id="pay" disabled>Pay</button>
+  <button class="clear" id="clear">Cancel / start over</button>
+</aside>
+
+<div class="done" id="done"><div>✓ Thank you!</div><small>Take your items</small></div>
+
+<script>
+const NOISE = 3;          // grams of drift we ignore
+const SETTLE_POLLS = 3;   // consecutive polls within 1 g before a reading counts as settled
+
+let items = [];
+let cart = [];            // one entry per unit
+let committed = null;     // scale weight (g) accounted for by the cart (plus tray/bag)
+let history = [];         // recent raw readings
+
+const $ = id => document.getElementById(id);
+const kr = n => n.toFixed(2).replace('.', ',') + ' kr';
+const g = n => n.toFixed(0) + ' g';
+
+async function loadItems() { items = await (await fetch('/api/items')).json(); }
+
+function settled() {
+  if (history.length < SETTLE_POLLS) return null;
+  const last = history.slice(-SETTLE_POLLS);
+  if (Math.max(...last) - Math.min(...last) > 1) return null;
+  return last.reduce((a, b) => a + b) / last.length;
+}
+
+function candidates(delta) {
+  return items.filter(i => i.stock > cart.filter(c => c.id === i.id).length &&
+                           Math.abs(delta - i.weight_g) <= i.tolerance_g)
+              .sort((a, b) => Math.abs(delta - a.weight_g) - Math.abs(delta - b.weight_g));
+}
+
+function addItem(it, S) { cart.push(it); committed = S; render(); }
+
+function setPrompt(cls, big, sub, extra = '') {
+  $('prompt').className = 'prompt ' + cls;
+  $('prompt').innerHTML = `<div class="big">${big}</div><div class="sub">${sub}</div>${extra}`;
+}
+
+function render() {
+  // basket
+  const groups = new Map();
+  cart.forEach(it => { const e = groups.get(it.id) || {it, n: 0}; e.n++; groups.set(it.id, e); });
+  $('cart').innerHTML = cart.length ? [...groups.values()].map(({it, n}) =>
+    `<div class="row"><span>${n} × ${it.name}</span><span>${kr(it.price * n)}</span></div>`).join('')
+    : '<div class="empty">Your basket is empty</div>';
+  $('total').textContent = kr(cart.reduce((s, i) => s + i.price, 0));
+
+  const raw = history.length ? history[history.length - 1] : null;
+  const S = settled();
+  let clear = false;
+
+  if (raw === null) {
+    setPrompt('', 'Waiting for scale…', '');
+    $('scaleMsg').textContent = 'No reading yet'; $('scale').className = 'scale';
+  } else if (S === null) {
+    setPrompt('', 'Weighing…', 'Hold still');
+  } else {
+    if (committed === null) committed = S;           // first settled reading = empty scale
+    const delta = S - committed;
+    if (Math.abs(delta) <= NOISE) {
+      clear = true;
+      const last = cart[cart.length - 1];
+      setPrompt(last ? 'ok' : '', last ? `✓ ${last.name}` : 'Ready',
+                cart.length ? 'Place the next item, or press Pay' : 'Place your first item on the scale');
+    } else if (delta < 0) {
+      setPrompt('bad', 'Something was removed', `Put it back (${g(-delta)} missing)`);
+    } else {
+      const c = candidates(delta);
+      if (c.length === 1) {
+        addItem(c[0], S);
+        return;
+      } else if (c.length > 1) {
+        setPrompt('', 'Which one did you add?', `Weight: ${g(delta)}`,
+          `<div class="choices">${c.map(i => `<button data-id="${i.id}">${i.name}</button>`).join('')}</div>`);
+        $('prompt').querySelectorAll('button').forEach(b =>
+          b.onclick = () => addItem(items.find(i => i.id == b.dataset.id), S));
+      } else {
+        setPrompt('bad', 'Item not recognised', `${g(delta)} was added. Remove it and try again.`,
+          `<button class="ghost" id="tare">It's my bag/tray, ignore it</button>`);
+        $('tare').onclick = () => { committed = S; render(); };
+      }
+    }
+    $('scale').className = 'scale ' + (clear ? 'ok' : 'bad');
+    $('scaleMsg').textContent = clear ? 'Scale matches basket ✓' : 'Waiting…';
+  }
+  if (raw !== null) $('scaleDetail').textContent = `Scale: ${g(raw)}`;
+  $('pay').disabled = !(cart.length && clear);
+}
+
+async function poll() {
+  try {
+    const w = (await (await fetch('/api/weight')).json()).weight;
+    if (w !== null) history = [...history, w].slice(-10);
+  } catch {}
+  render();
+}
+
+function reset() { cart = []; committed = settled(); render(); }
+
+$('clear').onclick = reset;
+$('pay').onclick = async () => {
+  await fetch('/api/checkout', {method: 'POST', body: JSON.stringify({ids: cart.map(i => i.id)})});
+  $('done').classList.add('show');
+  setTimeout(() => { $('done').classList.remove('show'); cart = []; committed = null; history = []; loadItems(); render(); }, 3000);
+};
+
+loadItems().then(render);
+setInterval(poll, 300);
+</script>
+</body>
+</html>
