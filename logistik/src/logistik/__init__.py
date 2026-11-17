@@ -36,6 +36,8 @@ class Distributionscenter:
         g= random.randint(0,255)
         b = random.randint(0,255)
         col = _from_rgb(r,g,b)
+        self.farve = col
+        self.byer = []
 
         self.canvas_item = self.canvas.create_rectangle(x-4, y-4, x+4, y+4, fill=col, outline='black')
 
@@ -86,13 +88,36 @@ class Logistik(tk.Frame):
         # og algoritmen K-means skal finde deres placering
         k = int(self.sl_k_means.get())
 
-        # Her flyttes det ene distributionscenter, for at demonstere.
-        self.distributionscentre[0].move_to(300,300)
-        self.byer[0].change_color(_from_rgb(255,0,0))
+        # Fjern gamle distributionscentre fra kortet
+        for dc in self.distributionscentre:
+            self.canvas.delete(dc.canvas_item)
+
+        # Opret K centre på tilfældige steder inden for byernes udstrækning
+        min_x = min(by.x for by in self.byer)
+        max_x = max(by.x for by in self.byer)
+        min_y = min(by.y for by in self.byer)
+        max_y = max(by.y for by in self.byer)
+        self.distributionscentre = [
+            Distributionscenter(random.randint(min_x, max_x),
+                                random.randint(min_y, max_y),
+                                self.canvas)
+            for _ in range(k)
+        ]
+
+        # Tilknyt hver by til det nærmeste center, og farv byen
+        for dc in self.distributionscentre:
+            dc.byer = []
+        for by in self.byer:
+            naermeste = min(
+                self.distributionscentre,
+                key=lambda dc: (dc.x - by.x) ** 2 + (dc.y - by.y) ** 2,
+            )
+            naermeste.byer.append(by)
+            by.change_color(naermeste.farve)
 
 
 
 def main():
-    prg = Logistik()
-    prg.master.title("Logistik")
+    root = tk.Tk()
+    prg = Logistik(master=root)
     prg.mainloop()
