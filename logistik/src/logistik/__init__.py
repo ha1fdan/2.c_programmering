@@ -42,6 +42,8 @@ class Distributionscenter:
         self.canvas_item = self.canvas.create_rectangle(x-4, y-4, x+4, y+4, fill=col, outline='black')
 
     def move_to(self, x, y):
+        self.x = x
+        self.y = y
         self.canvas.coords(self.canvas_item, x-4, y-4, x+4, y+4)
 
     def get_wcss(self):
@@ -104,6 +106,22 @@ class Logistik(tk.Frame):
             for _ in range(k)
         ]
 
+        # K-means: gentag fordeling og flytning, indtil centrene ikke flytter sig
+        while True:
+            self.fordel_byer()
+            flyttet = False
+            for dc in self.distributionscentre:
+                if not dc.byer:
+                    continue  # tomt cluster: centret bliver stående
+                nx = round(sum(by.x for by in dc.byer) / len(dc.byer))
+                ny = round(sum(by.y for by in dc.byer) / len(dc.byer))
+                if (nx, ny) != (dc.x, dc.y):
+                    dc.move_to(nx, ny)
+                    flyttet = True
+            if not flyttet:
+                break
+
+    def fordel_byer(self):
         # Tilknyt hver by til det nærmeste center, og farv byen
         for dc in self.distributionscentre:
             dc.byer = []
@@ -114,7 +132,6 @@ class Logistik(tk.Frame):
             )
             naermeste.byer.append(by)
             by.change_color(naermeste.farve)
-
 
 
 def main():
