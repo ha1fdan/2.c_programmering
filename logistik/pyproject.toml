@@ -7,7 +7,9 @@ authors = [
     { name = "ha1fdan", email = "ha1fdan@ha1fdan.xyz" }
 ]
 requires-python = ">=3.14"
-dependencies = []
+dependencies = [
+    "pillow>=13.0.0",
+]
 
 [project.scripts]
 logistik = "logistik:main"
