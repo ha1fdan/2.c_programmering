@@ -11,7 +11,7 @@ KORT_B, KORT_H = 488, 650
 current_dir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(current_dir)
 
-def _from_rgb(r, g, b):        
+def _from_rgb(r, g, b):
         return f'#{r:02x}{g:02x}{b:02x}'
 
 class By:
