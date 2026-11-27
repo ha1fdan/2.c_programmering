@@ -16,6 +16,12 @@ class FakeSerial:
     def __init__(self, **kwargs):
         self.lines = []
 
+    def reset_input_buffer(self):
+        pass
+
+    def write(self, data):
+        pass
+
     def readline(self):
         return self.lines.pop(0) if self.lines else b''
 

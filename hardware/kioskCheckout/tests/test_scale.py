@@ -28,3 +28,13 @@ def test_valid_readings_are_returned_in_grams(kiosk, line, expected):
 def test_garbage_is_ignored(kiosk, line):
     kiosk.ser.lines = [line]
     assert kiosk.read_weight() is None
+
+
+def test_zero_scale_succeeds_when_scale_settles_at_zero(kiosk):
+    kiosk.ser.lines = [b'5.0 g\r\n', b'0.0 g\r\n']
+    assert kiosk.zero_scale(timeout=2)
+
+
+def test_zero_scale_fails_when_weight_stays_on_scale(kiosk):
+    kiosk.ser.lines = [b'250 g\r\n'] * 20
+    assert not kiosk.zero_scale(timeout=1)

@@ -1,6 +1,7 @@
 import os
 import re
 import threading
+import time
 import serial
 from serial.tools import list_ports
 import sqlite3
@@ -17,17 +18,36 @@ port = matches[0]
 print(f"Using {port.device} - {port.description}")
 ser = serial.Serial(port=port.device, baudrate=9600, timeout=1)
 
+ZERO_TOLERANCE_G = 1.0
+scale_lock = threading.Lock()  # one serial conversation at a time
+
 WEIGHT_RE = re.compile(rb'^\s*(-?\d+(?:\.\d+)?)\s*(kg|g)\s*$')
 
 ##### FUNCTIONS #####
 
 def read_weight():
+    # This scale doesn't stream: it only sends a weight when asked with "P".
+    ser.reset_input_buffer()
+    ser.write(b'P\r\n')
     raw = ser.readline().replace(b'\x00', b'')
     match = WEIGHT_RE.match(raw.strip(b'\r\n'))
     if not match:
         return None  # fragment, blank line or unstable ("?") reading
     value = float(match.group(1))
     return value * 1000 if match.group(2) == b'kg' else value
+
+
+def zero_scale(timeout=5.0):
+    """Zero the scale (command "Z") and wait for it to read ~0 g. Returns True on success."""
+    ser.reset_input_buffer()
+    ser.write(b'Z\r\n')
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
+        time.sleep(0.3)  # the scale needs a moment to settle after zeroing
+        weight = read_weight()
+        if weight is not None and abs(weight) <= ZERO_TOLERANCE_G:
+            return True
+    return False
 
 
 def get_db():
@@ -41,9 +61,11 @@ def scale_loop():
     """Keep the latest stable weight (grams) in latest_weight."""
     global latest_weight
     while True:
-        weight = read_weight()
+        with scale_lock:
+            weight = read_weight()
         if weight is not None:
             latest_weight = weight
+        time.sleep(0.1)
 
 
 ##### WEB APP #####
@@ -60,6 +82,14 @@ def index():
 @app.route('/api/weight')
 def api_weight():
     return jsonify(weight=latest_weight)
+
+
+@app.route('/api/admin/zero', methods=['POST'])
+def api_zero():
+    """Re-zero the empty scale. Pauses the reader thread so the replies don't mix."""
+    with scale_lock:
+        ok = zero_scale()
+    return jsonify(ok=ok), (200 if ok else 409)
 
 
 @app.route('/api/items')
@@ -163,5 +193,10 @@ def admin_delete_item(item_id):
 
 
 if __name__ == '__main__':
+    # Start from a known empty scale, so the first weight the kiosk sees is 0 g.
+    if zero_scale():
+        print("Scale zeroed")
+    else:
+        print("WARNING: scale did not settle at 0 g after zeroing - is something on it?")
     threading.Thread(target=scale_loop, daemon=True).start()
     app.run(host='127.0.0.1', port=5000)

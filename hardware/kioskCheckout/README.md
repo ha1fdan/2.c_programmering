@@ -5,6 +5,7 @@ A self-checkout kiosk that identifies items by weight. Customers place items on 
 ## Features
 
 - [x] Read stable weights from a serial scale (auto-detects the FT230X adapter)
+- [x] Scale is zeroed on startup (and via `POST /api/admin/zero`)
 - [x] Item database in SQLite (name, category, price, weight, tolerance, stock)
 - [x] CLI for adding, updating, deleting and listing items (`add_item.py`)
 - [x] Self-checkout page that identifies items by weight alone
@@ -43,7 +44,7 @@ uv pip install -r requirements.txt
 uv run python3 main.py
 ```
 
-Then open <http://127.0.0.1:5000>. The app exits at startup if no serial port with `FT230X Basic UART` in its name is found.
+Then open <http://127.0.0.1:5000>. The app exits at startup if no serial port with `FT230X Basic UART` in its name is found. On start it sends `Z` to zero the scale, so keep the platform empty; it prints a warning if the scale doesn't settle at 0 g. To re-zero while running: `curl -X POST http://127.0.0.1:5000/api/admin/zero`.
 
 ### Admin panel
 
